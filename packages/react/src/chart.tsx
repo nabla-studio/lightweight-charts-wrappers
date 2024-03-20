@@ -17,7 +17,7 @@ function resizeSubscribe(callback: (this: Window, ev: UIEvent) => unknown) {
 export const Chart = memo((props: PropsWithChildren<ChartProps>) => {
   const { options, children, onCreate } = props;
   const [container, setContainer] = useState<HTMLDivElement | null>(null)
-  const chart = useRef<IChartApi | null>();
+  const chart = useRef<IChartApi>();
 
   useSyncExternalStore(
     resizeSubscribe,
@@ -29,7 +29,7 @@ export const Chart = memo((props: PropsWithChildren<ChartProps>) => {
   );
 
   useEffect(() => {
-    if (container) {
+    if (container && chart.current === undefined) {
       chart.current = createChart(container, {
         width: container?.clientWidth,
         ...options,
