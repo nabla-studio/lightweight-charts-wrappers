@@ -3,14 +3,16 @@ import {
   createChart,
   type DeepPartial,
   type TimeChartOptions,
+  MouseEventParams,
+  Time,
 } from 'lightweight-charts';
 import {
-  type PropsWithChildren,
   useRef,
   useSyncExternalStore,
   memo,
   useEffect,
   useState,
+  type ReactNode,
 } from 'react';
 
 function resizeSubscribe(callback: (this: Window, ev: UIEvent) => unknown) {
@@ -21,10 +23,18 @@ function resizeSubscribe(callback: (this: Window, ev: UIEvent) => unknown) {
   };
 }
 
-export abstract class ChartController<T = TimeChartOptions> {
+export interface ChartControllerParams<T = TimeChartOptions, K = Time> {
+  options: DeepPartial<T>;
+  container: HTMLElement;
+  onCrosshairMove?: (param: MouseEventParams<K>) => void;
+}
+
+export abstract class ChartController<T = TimeChartOptions, K = Time> {
   protected api: IChartApi;
 
-  constructor(private options: DeepPartial<T>, private container: HTMLElement) {
+  constructor(private params: ChartControllerParams<T, K>) {
+    const { options, container, onCrosshairMove } = params;
+
     this.api = createChart(container, {
       width: container?.clientWidth,
       ...options,
@@ -32,20 +42,10 @@ export abstract class ChartController<T = TimeChartOptions> {
 
     this.api.timeScale().fitContent();
 
-    const lineSeries = this.api.addLineSeries();
-
-    lineSeries.setData([
-      { time: '2019-04-11', value: 80.01 },
-      { time: '2019-04-12', value: 96.63 },
-      { time: '2019-04-13', value: 76.64 },
-      { time: '2019-04-14', value: 81.89 },
-      { time: '2019-04-15', value: 74.43 },
-      { time: '2019-04-16', value: 80.01 },
-      { time: '2019-04-17', value: 96.63 },
-      { time: '2019-04-18', value: 76.64 },
-      { time: '2019-04-19', value: 81.89 },
-      { time: '2019-04-20', value: 74.43 },
-    ]);
+    this.api.subscribeCrosshairMove((param) => {
+      onCrosshairMove?.(param as never);
+      this.onCrosshairMove(param as never);
+    });
 
     this.onInit();
   }
@@ -55,7 +55,11 @@ export abstract class ChartController<T = TimeChartOptions> {
   }
 
   resize() {
-    this.applyOptions({ ...this.options, width: this.container.clientWidth });
+    this.applyOptions({
+      ...this.params.options,
+      width: this.params.container.clientWidth,
+    });
+
     this.api.timeScale().fitContent();
   }
 
@@ -66,21 +70,24 @@ export abstract class ChartController<T = TimeChartOptions> {
 
   abstract onInit(): void;
   abstract onRemove(): void;
+  abstract onCrosshairMove(param: MouseEventParams<K>): void;
 }
 
-export interface ChartProps<T> {
-  options: DeepPartial<TimeChartOptions>;
-  controller: new (
-    options: DeepPartial<TimeChartOptions>,
-    container: HTMLElement
-  ) => ChartController<T>;
+export interface ChartProps<T = TimeChartOptions, K = Time> {
+  options: DeepPartial<T>;
+  children?: ReactNode | ((params?: MouseEventParams<K>) => ReactNode);
+  Controller: new (params: ChartControllerParams<T, K>) => ChartController<
+    T,
+    K
+  >;
 }
 
 export const Chart = memo(
-  <T extends TimeChartOptions>(props: PropsWithChildren<ChartProps<T>>) => {
-    const { options, children, controller } = props;
+  <T extends TimeChartOptions, K extends Time>(props: ChartProps<T, K>) => {
+    const { options, children, Controller } = props;
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
-    const chart = useRef<ChartController>();
+    const [hoverParam, setHoverParam] = useState<MouseEventParams<K>>();
+    const chart = useRef<ChartController<T, K>>();
 
     useSyncExternalStore(
       resizeSubscribe,
@@ -92,21 +99,11 @@ export const Chart = memo(
 
     useEffect(() => {
       if (container && chart.current === undefined) {
-        chart.current = new controller(options, container);
-
-        /*  const lineSeries = chart.current.addLineSeries();
-      lineSeries.setData([
-          { time: '2019-04-11', value: 80.01 },
-          { time: '2019-04-12', value: 96.63 },
-          { time: '2019-04-13', value: 76.64 },
-          { time: '2019-04-14', value: 81.89 },
-          { time: '2019-04-15', value: 74.43 },
-          { time: '2019-04-16', value: 80.01 },
-          { time: '2019-04-17', value: 96.63 },
-          { time: '2019-04-18', value: 76.64 },
-          { time: '2019-04-19', value: 81.89 },
-          { time: '2019-04-20', value: 74.43 },
-      ]); */
+        chart.current = new Controller({
+          options,
+          container,
+          onCrosshairMove: setHoverParam,
+        });
       }
     }, [container]);
 
@@ -121,6 +118,10 @@ export const Chart = memo(
       };
     }, []);
 
-    return <div ref={setContainer}>{children}</div>;
+    return (
+      <div ref={setContainer}>
+        {typeof children === 'function' ? children(hoverParam) : children}
+      </div>
+    );
   }
 );

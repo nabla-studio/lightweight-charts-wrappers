@@ -1,14 +1,42 @@
-import { Chart, ChartController } from '@nabla-studio/lightweight-charts-react';
+import {
+  Chart,
+  ChartController,
+  ChartControllerParams,
+} from '@nabla-studio/lightweight-charts-react';
 import {
   ColorType,
-  DeepPartial,
-  IChartApi,
   LineStyle,
+  MouseEventParams,
+  Time,
   TimeChartOptions,
 } from 'lightweight-charts';
 import { Route, Routes, Link } from 'react-router-dom';
 
 class LinearChartController extends ChartController {
+  constructor(params: ChartControllerParams<TimeChartOptions, Time>) {
+    super(params);
+
+    const lineSeries = this.api.addLineSeries();
+
+    lineSeries.setData([
+      { time: '2019-04-11', value: 80.01 },
+      { time: '2019-04-12', value: 96.63 },
+      { time: '2019-04-13', value: 76.64 },
+      { time: '2019-04-14', value: 81.89 },
+      { time: '2019-04-15', value: 74.43 },
+      { time: '2019-04-16', value: 80.01 },
+      { time: '2019-04-17', value: 96.63 },
+      { time: '2019-04-18', value: 76.64 },
+      { time: '2019-04-19', value: 81.89 },
+      { time: '2019-04-20', value: 74.43 },
+    ]);
+  }
+
+  onCrosshairMove(param: MouseEventParams<Time>): void {
+    console.log('MOVE');
+    console.log(param);
+  }
+
   onInit(): void {
     console.log('INIT');
   }
@@ -22,7 +50,7 @@ export function App() {
   return (
     <div>
       <Chart
-        controller={LinearChartController}
+        Controller={LinearChartController}
         options={{
           layout: {
             background: {
@@ -42,7 +70,25 @@ export function App() {
           },
           height: 336,
         }}
-      ></Chart>
+      >
+        {(param) => {
+          const dataSeries = Array.from(
+            param?.seriesData ?? [],
+            ([key, value]) => ({
+              key,
+              value,
+            })
+          );
+
+          if (dataSeries.length === 0) {
+            return <div>X: {param?.point?.x}</div>;
+          }
+
+          const [data] = dataSeries;
+
+          return <div>{data.value.time.toString()}</div>;
+        }}
+      </Chart>
       {/* START: routes */}
       {/* These routes and navigation have been generated for you */}
       {/* Feel free to move and update them to fit your needs */}
