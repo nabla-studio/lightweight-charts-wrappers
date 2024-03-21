@@ -1,27 +1,48 @@
-import { Chart } from '@nabla-studio/lightweight-charts-react';
-import { ColorType, LineStyle } from 'lightweight-charts';
+import { Chart, ChartController } from '@nabla-studio/lightweight-charts-react';
+import {
+  ColorType,
+  DeepPartial,
+  IChartApi,
+  LineStyle,
+  TimeChartOptions,
+} from 'lightweight-charts';
 import { Route, Routes, Link } from 'react-router-dom';
+
+class LinearChartController extends ChartController {
+  onInit(): void {
+    console.log('INIT');
+  }
+
+  onRemove(): void {
+    console.log('REMOVE');
+  }
+}
 
 export function App() {
   return (
     <div>
-      <Chart options={{ layout: {
-                background: {
-                  type: ColorType.Solid,
-                  color: "red",
-                },
-                textColor: "white",
-                fontSize: 14,
-              },
-              crosshair: {
-                vertLine: {
-                  labelBackgroundColor: "white",
-                  style: LineStyle.LargeDashed,
-                  width: 2,
-                  color: "white",
-                },
-              }, height: 336 }}>
-              </Chart>
+      <Chart
+        controller={LinearChartController}
+        options={{
+          layout: {
+            background: {
+              type: ColorType.Solid,
+              color: 'red',
+            },
+            textColor: 'white',
+            fontSize: 14,
+          },
+          crosshair: {
+            vertLine: {
+              labelBackgroundColor: 'white',
+              style: LineStyle.LargeDashed,
+              width: 2,
+              color: 'white',
+            },
+          },
+          height: 336,
+        }}
+      ></Chart>
       {/* START: routes */}
       {/* These routes and navigation have been generated for you */}
       {/* Feel free to move and update them to fit your needs */}
