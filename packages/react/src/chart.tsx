@@ -1,3 +1,4 @@
+import EventEmitter from 'eventemitter3';
 import {
   type IChartApi,
   createChart,
@@ -29,10 +30,18 @@ export interface ChartControllerParams<T = TimeChartOptions, K = Time> {
   onCrosshairMove?: (param: MouseEventParams<K>) => void;
 }
 
+export type ChartControllerEvents<T = TimeChartOptions, K = Time> = {
+  crosshairMove: (param: MouseEventParams<K>) => void;
+  init: (params: ChartControllerParams<T>) => void;
+  remove: (params: ChartControllerParams<T>) => void;
+};
+
 export abstract class ChartController<T = TimeChartOptions, K = Time> {
   protected api: IChartApi;
 
-  constructor(private params: ChartControllerParams<T, K>) {
+  events = new EventEmitter<ChartControllerEvents>();
+
+  constructor(private params: ChartControllerParams<T>) {
     const { options, container, onCrosshairMove } = params;
 
     this.api = createChart(container, {
@@ -44,10 +53,10 @@ export abstract class ChartController<T = TimeChartOptions, K = Time> {
 
     this.api.subscribeCrosshairMove((param) => {
       onCrosshairMove?.(param as never);
-      this.onCrosshairMove(param as never);
+      this.events.emit('crosshairMove', param);
     });
 
-    this.onInit();
+    this.events.emit('init', this.params);
   }
 
   applyOptions(options: DeepPartial<T>) {
@@ -65,12 +74,8 @@ export abstract class ChartController<T = TimeChartOptions, K = Time> {
 
   remove() {
     this.api.remove();
-    this.onRemove();
+    this.events.emit('remove', this.params);
   }
-
-  abstract onInit(): void;
-  abstract onRemove(): void;
-  abstract onCrosshairMove(param: MouseEventParams<K>): void;
 }
 
 export interface ChartProps<T = TimeChartOptions, K = Time> {

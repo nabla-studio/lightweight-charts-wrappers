@@ -8,5 +8,9 @@
       "import": "./index.mjs",
       "require": "./index.js"
     }
+  },
+  "dependencies": {
+    "eventemitter3": "^5.0.1",
+    "lightweight-charts": "^4.1.3"
   }
 }
