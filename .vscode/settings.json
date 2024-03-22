@@ -1,5 +1,6 @@
 {
     "conventionalCommits.scopes": [
-        "react"
+        "react",
+        "react-example"
     ]
 }
