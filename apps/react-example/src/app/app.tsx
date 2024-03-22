@@ -1,8 +1,8 @@
+import { Chart } from '@nabla-studio/lightweight-charts-react';
 import {
-  Chart,
   ChartController,
   ChartControllerParams,
-} from '@nabla-studio/lightweight-charts-react';
+} from '@nabla-studio/lightweight-charts-core';
 import {
   AreaData,
   AreaSeriesOptions,
@@ -22,17 +22,23 @@ import { useState } from 'react';
 import { Route, Routes, Link } from 'react-router-dom';
 
 const seriesOpt: DeepPartial<AreaSeriesOptions> = {
-  lineColor: "#8C8AF9",
-  topColor: "rgba(60, 53, 109, 1)",
-  bottomColor: "rgba(32, 27, 67, 1)",
+  lineColor: '#8C8AF9',
+  topColor: 'rgba(60, 53, 109, 1)',
+  bottomColor: 'rgba(32, 27, 67, 1)',
   priceLineVisible: false,
-  priceScaleId: "left",
+  priceScaleId: 'left',
   crosshairMarkerBorderWidth: 0,
   crosshairMarkerRadius: 8,
-}
+};
 
 class LinearChartController extends ChartController {
-  lineSeries: ISeriesApi<"Area", Time, AreaData<Time> | WhitespaceData<Time>, AreaSeriesOptions, DeepPartial<AreaStyleOptions & SeriesOptionsCommon>>
+  lineSeries: ISeriesApi<
+    'Area',
+    Time,
+    AreaData<Time> | WhitespaceData<Time>,
+    AreaSeriesOptions,
+    DeepPartial<AreaStyleOptions & SeriesOptionsCommon>
+  >;
 
   constructor(params: ChartControllerParams<TimeChartOptions, Time>) {
     super(params);
@@ -44,7 +50,9 @@ class LinearChartController extends ChartController {
     }
   }
 
-  applyOptions(params: Partial<ChartControllerParams<TimeChartOptions, Time>>): void {
+  applyOptions(
+    params: Partial<ChartControllerParams<TimeChartOptions, Time>>
+  ): void {
     super.applyOptions(params);
 
     if (params.series && params.series.length > 0) {
@@ -53,7 +61,7 @@ class LinearChartController extends ChartController {
 
     /* this.lineSeries.setData(params?.series?.[0].data ?? []); */
 
-   /*  console.log("APPLY: ", params?.series?.[0].data ?? [])
+    /*  console.log("APPLY: ", params?.series?.[0].data ?? [])
 
     this.lineSeries.setData(params?.series?.[0].data ?? []) */
   }
@@ -97,38 +105,38 @@ const options: DeepPartial<TimeChartOptions> = {
 
       switch (tickMarkType) {
         case TickMarkType.Year:
-          formatOptions.year = "numeric";
+          formatOptions.year = 'numeric';
           break;
 
         case TickMarkType.Month:
-          formatOptions.month = "short";
+          formatOptions.month = 'short';
           break;
 
         case TickMarkType.DayOfMonth:
-          formatOptions.day = "numeric";
-          formatOptions.month = "short";
+          formatOptions.day = 'numeric';
+          formatOptions.month = 'short';
           break;
 
         case TickMarkType.Time:
           formatOptions.hour12 = false;
-          formatOptions.hour = "2-digit";
-          formatOptions.minute = "2-digit";
+          formatOptions.hour = '2-digit';
+          formatOptions.minute = '2-digit';
           break;
 
         case TickMarkType.TimeWithSeconds:
           formatOptions.hour12 = false;
-          formatOptions.hour = "2-digit";
-          formatOptions.minute = "2-digit";
-          formatOptions.second = "2-digit";
+          formatOptions.hour = '2-digit';
+          formatOptions.minute = '2-digit';
+          formatOptions.second = '2-digit';
           break;
       }
 
       let date = new Date();
 
       if (typeof timePoint === 'string') {
-        date = new Date(timePoint)
+        date = new Date(timePoint);
       } else if (!isBusinessDay(timePoint)) {
-        date = new Date((timePoint as number) * 1000)
+        date = new Date((timePoint as number) * 1000);
       } else {
         date = new Date(
           Date.UTC(timePoint.year, timePoint.month - 1, timePoint.day)
@@ -151,7 +159,7 @@ const options: DeepPartial<TimeChartOptions> = {
     },
   },
   height: 336,
-}
+};
 
 export function App() {
   const [toggle, setToggle] = useState(false);
@@ -164,42 +172,43 @@ export function App() {
         options={options}
         series={[
           {
-            type: "Area",
+            type: 'Area',
             options: seriesOpt,
-            data: toggle ? [
-              { time: '2019-04-11', value: 80.01 },
-              { time: '2019-04-12', value: 96.63 },
-              { time: '2019-04-13', value: 76.64 },
-              { time: '2019-04-14', value: 81.89 },
-              { time: '2019-04-15', value: 74.43 },
-              { time: '2019-04-16', value: 80.01 },
-              { time: '2019-04-17', value: 96.63 },
-              { time: '2019-04-18', value: 76.64 },
-              { time: '2019-04-19', value: 81.89 },
-              { time: '2019-04-20', value: 74.43 },
-              { time: '2019-04-21', value: 80.01 },
-              { time: '2019-04-22', value: 96.63 },
-              { time: '2019-04-23', value: 76.64 },
-              { time: '2019-04-24', value: 81.89 },
-              { time: '2019-04-25', value: 74.43 },
-              { time: '2019-04-26', value: 80.01 },
-              { time: '2019-04-27', value: 96.63 },
-              { time: '2019-04-28', value: 76.64 },
-              { time: '2019-04-29', value: 81.89 },
-              { time: '2019-04-30', value: 74.43 },
-            ] : 
-            [
-              { time: '2019-04-11', value: 80.01 },
-              { time: '2019-04-12', value: 96.63 },
-              { time: '2019-04-13', value: 76.64 },
-              { time: '2019-04-14', value: 81.89 },
-              { time: '2019-04-15', value: 74.43 },
-              { time: '2019-04-16', value: 80.01 },
-              { time: '2019-04-17', value: 96.63 },
-              { time: '2019-04-18', value: 76.64 },
-              { time: '2019-04-19', value: 81.89 },
-            ]
-          }
+            data: toggle
+              ? [
+                  { time: '2019-04-11', value: 80.01 },
+                  { time: '2019-04-12', value: 96.63 },
+                  { time: '2019-04-13', value: 76.64 },
+                  { time: '2019-04-14', value: 81.89 },
+                  { time: '2019-04-15', value: 74.43 },
+                  { time: '2019-04-16', value: 80.01 },
+                  { time: '2019-04-17', value: 96.63 },
+                  { time: '2019-04-18', value: 76.64 },
+                  { time: '2019-04-19', value: 81.89 },
+                  { time: '2019-04-20', value: 74.43 },
+                  { time: '2019-04-21', value: 80.01 },
+                  { time: '2019-04-22', value: 96.63 },
+                  { time: '2019-04-23', value: 76.64 },
+                  { time: '2019-04-24', value: 81.89 },
+                  { time: '2019-04-25', value: 74.43 },
+                  { time: '2019-04-26', value: 80.01 },
+                  { time: '2019-04-27', value: 96.63 },
+                  { time: '2019-04-28', value: 76.64 },
+                  { time: '2019-04-29', value: 81.89 },
+                  { time: '2019-04-30', value: 74.43 },
+                ]
+              : [
+                  { time: '2019-04-11', value: 80.01 },
+                  { time: '2019-04-12', value: 96.63 },
+                  { time: '2019-04-13', value: 76.64 },
+                  { time: '2019-04-14', value: 81.89 },
+                  { time: '2019-04-15', value: 74.43 },
+                  { time: '2019-04-16', value: 80.01 },
+                  { time: '2019-04-17', value: 96.63 },
+                  { time: '2019-04-18', value: 76.64 },
+                  { time: '2019-04-19', value: 81.89 },
+                ],
+          },
         ]}
       >
         {(param) => {

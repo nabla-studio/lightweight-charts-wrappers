@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@nabla-studio/lightweight-charts-core": ["packages/core/src/index.ts"],
       "@nabla-studio/lightweight-charts-react": ["packages/react/src/index.ts"]
     }
   },

@@ -3,14 +3,17 @@
   "version": "0.0.1",
   "main": "./index.js",
   "types": "./index.d.ts",
+  "sideEffects": false,
   "exports": {
     ".": {
       "import": "./index.mjs",
       "require": "./index.js"
     }
   },
+  "peerDependencies": {
+    "react": "18.2.0"
+  },
   "dependencies": {
-    "eventemitter3": "^5.0.1",
     "lightweight-charts": "^4.1.3"
   }
 }

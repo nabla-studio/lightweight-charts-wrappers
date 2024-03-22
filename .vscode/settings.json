@@ -1,6 +1,7 @@
 {
-    "conventionalCommits.scopes": [
-        "react",
-        "react-example"
-    ]
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true, // optional
+  "editor.formatOnSaveMode": "file", // required to format on save
+  "files.autoSave": "onFocusChange", // optional but recommended,
+  "conventionalCommits.scopes": ["react", "react-example", "core"]
 }

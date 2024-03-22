@@ -1,0 +1,12 @@
+{
+  "name": "@nabla-studio/lightweight-charts-core",
+  "version": "0.0.1",
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "typings": "./index.d.ts",
+  "sideEffects": false,
+  "dependencies": {
+    "eventemitter3": "^5.0.1",
+    "lightweight-charts": "^4.1.3"
+  }
+}
