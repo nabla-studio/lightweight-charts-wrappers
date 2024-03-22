@@ -4,60 +4,58 @@ import {
   ChartControllerParams,
 } from '@nabla-studio/lightweight-charts-react';
 import {
+  AreaData,
+  AreaSeriesOptions,
+  AreaStyleOptions,
   ColorType,
   DeepPartial,
+  ISeriesApi,
   LineStyle,
+  SeriesOptionsCommon,
   TickMarkType,
   Time,
   TimeChartOptions,
+  WhitespaceData,
   isBusinessDay,
 } from 'lightweight-charts';
+import { useState } from 'react';
 import { Route, Routes, Link } from 'react-router-dom';
 
+const seriesOpt: DeepPartial<AreaSeriesOptions> = {
+  lineColor: "#8C8AF9",
+  topColor: "rgba(60, 53, 109, 1)",
+  bottomColor: "rgba(32, 27, 67, 1)",
+  priceLineVisible: false,
+  priceScaleId: "left",
+  crosshairMarkerBorderWidth: 0,
+  crosshairMarkerRadius: 8,
+}
+
 class LinearChartController extends ChartController {
+  lineSeries: ISeriesApi<"Area", Time, AreaData<Time> | WhitespaceData<Time>, AreaSeriesOptions, DeepPartial<AreaStyleOptions & SeriesOptionsCommon>>
+
   constructor(params: ChartControllerParams<TimeChartOptions, Time>) {
     super(params);
 
-    const lineSeries = this.api.addAreaSeries({
-      lineColor: "#8C8AF9",
-      topColor: "rgba(60, 53, 109, 1)",
-      bottomColor: "rgba(32, 27, 67, 1)",
-      priceLineVisible: false,
-      priceScaleId: "left",
-      crosshairMarkerBorderWidth: 0,
-      crosshairMarkerRadius: 8,
-    });
+    this.lineSeries = this.api.addAreaSeries(seriesOpt);
 
-    lineSeries.setData([
-      { time: '2019-04-11', value: 80.01 },
-      { time: '2019-04-12', value: 96.63 },
-      { time: '2019-04-13', value: 76.64 },
-      { time: '2019-04-14', value: 81.89 },
-      { time: '2019-04-15', value: 74.43 },
-      { time: '2019-04-16', value: 80.01 },
-      { time: '2019-04-17', value: 96.63 },
-      { time: '2019-04-18', value: 76.64 },
-      { time: '2019-04-19', value: 81.89 },
-      { time: '2019-04-20', value: 74.43 },
-      { time: '2019-04-21', value: 80.01 },
-      { time: '2019-04-22', value: 96.63 },
-      { time: '2019-04-23', value: 76.64 },
-      { time: '2019-04-24', value: 81.89 },
-      { time: '2019-04-25', value: 74.43 },
-      { time: '2019-04-26', value: 80.01 },
-      { time: '2019-04-27', value: 96.63 },
-      { time: '2019-04-28', value: 76.64 },
-      { time: '2019-04-29', value: 81.89 },
-      { time: '2019-04-30', value: 74.43 },
-    ]);
+    if (params.series && params.series.length > 0) {
+      this.lineSeries.setData(params.series[0].data);
+    }
   }
 
-  onInit(): void {
-    console.log('INIT');
-  }
+  applyOptions(params: Partial<ChartControllerParams<TimeChartOptions, Time>>): void {
+    super.applyOptions(params);
 
-  onRemove(): void {
-    console.log('REMOVE');
+    if (params.series && params.series.length > 0) {
+      this.lineSeries.setData(params.series[0].data);
+    }
+
+    /* this.lineSeries.setData(params?.series?.[0].data ?? []); */
+
+   /*  console.log("APPLY: ", params?.series?.[0].data ?? [])
+
+    this.lineSeries.setData(params?.series?.[0].data ?? []) */
   }
 }
 
@@ -156,11 +154,53 @@ const options: DeepPartial<TimeChartOptions> = {
 }
 
 export function App() {
+  const [toggle, setToggle] = useState(false);
+
   return (
     <div>
+      <button onClick={() => setToggle(!toggle)}>TOGGLE</button>
       <Chart
         Controller={LinearChartController}
         options={options}
+        series={[
+          {
+            type: "Area",
+            options: seriesOpt,
+            data: toggle ? [
+              { time: '2019-04-11', value: 80.01 },
+              { time: '2019-04-12', value: 96.63 },
+              { time: '2019-04-13', value: 76.64 },
+              { time: '2019-04-14', value: 81.89 },
+              { time: '2019-04-15', value: 74.43 },
+              { time: '2019-04-16', value: 80.01 },
+              { time: '2019-04-17', value: 96.63 },
+              { time: '2019-04-18', value: 76.64 },
+              { time: '2019-04-19', value: 81.89 },
+              { time: '2019-04-20', value: 74.43 },
+              { time: '2019-04-21', value: 80.01 },
+              { time: '2019-04-22', value: 96.63 },
+              { time: '2019-04-23', value: 76.64 },
+              { time: '2019-04-24', value: 81.89 },
+              { time: '2019-04-25', value: 74.43 },
+              { time: '2019-04-26', value: 80.01 },
+              { time: '2019-04-27', value: 96.63 },
+              { time: '2019-04-28', value: 76.64 },
+              { time: '2019-04-29', value: 81.89 },
+              { time: '2019-04-30', value: 74.43 },
+            ] : 
+            [
+              { time: '2019-04-11', value: 80.01 },
+              { time: '2019-04-12', value: 96.63 },
+              { time: '2019-04-13', value: 76.64 },
+              { time: '2019-04-14', value: 81.89 },
+              { time: '2019-04-15', value: 74.43 },
+              { time: '2019-04-16', value: 80.01 },
+              { time: '2019-04-17', value: 96.63 },
+              { time: '2019-04-18', value: 76.64 },
+              { time: '2019-04-19', value: 81.89 },
+            ]
+          }
+        ]}
       >
         {(param) => {
           const dataSeries = Array.from(
