@@ -4,8 +4,8 @@ import {
   createChart,
   type DeepPartial,
   type TimeChartOptions,
-  MouseEventParams,
-  Time,
+  type MouseEventParams,
+  type Time,
 } from 'lightweight-charts';
 import {
   useRef,
@@ -39,7 +39,7 @@ export type ChartControllerEvents<T = TimeChartOptions, K = Time> = {
 export abstract class ChartController<T = TimeChartOptions, K = Time> {
   protected api: IChartApi;
 
-  events = new EventEmitter<ChartControllerEvents>();
+  events = new EventEmitter<ChartControllerEvents<T, K>>();
 
   constructor(private params: ChartControllerParams<T>) {
     const { options, container, onCrosshairMove } = params;
@@ -53,7 +53,7 @@ export abstract class ChartController<T = TimeChartOptions, K = Time> {
 
     this.api.subscribeCrosshairMove((param) => {
       onCrosshairMove?.(param as never);
-      this.events.emit('crosshairMove', param);
+      this.events.emit('crosshairMove', param as never);
     });
 
     this.events.emit('init', this.params);
