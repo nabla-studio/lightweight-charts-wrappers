@@ -38,11 +38,14 @@ export type ChartControllerEvents<T = TimeChartOptions, K = Time> = {
 
 export abstract class ChartController<T = TimeChartOptions, K = Time> {
   protected api: IChartApi;
+  protected onCrosshairMove:  ((param: MouseEventParams<Time>) => void) | undefined;
 
   events = new EventEmitter<ChartControllerEvents<T, K>>();
 
   constructor(private params: ChartControllerParams<T>) {
     const { options, container, onCrosshairMove } = params;
+
+    this.onCrosshairMove = onCrosshairMove;
 
     this.api = createChart(container, {
       width: container?.clientWidth,
@@ -52,21 +55,29 @@ export abstract class ChartController<T = TimeChartOptions, K = Time> {
     this.api.timeScale().fitContent();
 
     this.api.subscribeCrosshairMove((param) => {
-      onCrosshairMove?.(param as never);
+      this.onCrosshairMove?.(param as never);
       this.events.emit('crosshairMove', param as never);
     });
 
     this.events.emit('init', this.params);
   }
 
-  applyOptions(options: DeepPartial<T>) {
-    this.api.applyOptions(options);
+  applyOptions(params: Partial<ChartControllerParams<T>>) {
+    if (params.options) {
+      this.api.applyOptions(params.options);
+    }
+
+    if (params.onCrosshairMove) {
+      this.onCrosshairMove = params.onCrosshairMove;
+    }
   }
 
   resize() {
     this.applyOptions({
-      ...this.params.options,
-      width: this.params.container.clientWidth,
+      options: {
+        ...this.params.options,
+        width: this.params.container.clientWidth,
+      },
     });
 
     this.api.timeScale().fitContent();
@@ -113,7 +124,7 @@ export const Chart = memo(
     }, [container]);
 
     useEffect(() => {
-      chart.current?.applyOptions(options);
+      chart.current?.applyOptions({ options });
     }, [options]);
 
     useEffect(() => {
