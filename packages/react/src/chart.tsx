@@ -6,6 +6,8 @@ import {
   type TimeChartOptions,
   type MouseEventParams,
   type Time,
+  type SeriesDataItemTypeMap,
+  type SeriesOptionsMap,
 } from 'lightweight-charts';
 import {
   useRef,
@@ -24,8 +26,15 @@ function resizeSubscribe(callback: (this: Window, ev: UIEvent) => unknown) {
   };
 }
 
+export interface Series {
+  type: keyof SeriesOptionsMap;
+  options: DeepPartial<SeriesOptionsMap[keyof SeriesOptionsMap]>;
+  data: SeriesDataItemTypeMap<Time>[keyof SeriesOptionsMap][];
+}
+
 export interface ChartControllerParams<T = TimeChartOptions, K = Time> {
   options: DeepPartial<T>;
+  series?: Series[];
   container: HTMLElement;
   onCrosshairMove?: (param: MouseEventParams<K>) => void;
 }
@@ -73,11 +82,9 @@ export abstract class ChartController<T = TimeChartOptions, K = Time> {
   }
 
   resize() {
-    this.applyOptions({
-      options: {
-        ...this.params.options,
-        width: this.params.container.clientWidth,
-      },
+    this.api.applyOptions({
+      ...this.params.options,
+      width: this.params.container.clientWidth,
     });
 
     this.api.timeScale().fitContent();
@@ -91,6 +98,7 @@ export abstract class ChartController<T = TimeChartOptions, K = Time> {
 
 export interface ChartProps<T = TimeChartOptions, K = Time> {
   options: DeepPartial<T>;
+  series?: Series[];
   children?: ReactNode | ((params?: MouseEventParams<K>) => ReactNode);
   Controller: new (params: ChartControllerParams<T, K>) => ChartController<
     T,
@@ -100,7 +108,7 @@ export interface ChartProps<T = TimeChartOptions, K = Time> {
 
 export const Chart = memo(
   <T extends TimeChartOptions, K extends Time>(props: ChartProps<T, K>) => {
-    const { options, children, Controller } = props;
+    const { options, children, series, Controller } = props;
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
     const [hoverParam, setHoverParam] = useState<MouseEventParams<K>>();
     const chart = useRef<ChartController<T, K>>();
@@ -117,6 +125,7 @@ export const Chart = memo(
       if (container && chart.current === undefined) {
         chart.current = new Controller({
           options,
+          series,
           container,
           onCrosshairMove: setHoverParam,
         });
@@ -124,8 +133,8 @@ export const Chart = memo(
     }, [container]);
 
     useEffect(() => {
-      chart.current?.applyOptions({ options });
-    }, [options]);
+      chart.current?.applyOptions({ options, series });
+    }, [options, series]);
 
     useEffect(() => {
       return () => {
