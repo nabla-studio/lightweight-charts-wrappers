@@ -31,6 +31,16 @@ const seriesOpt: DeepPartial<AreaSeriesOptions> = {
   crosshairMarkerRadius: 8,
 };
 
+const seriesOpt2: DeepPartial<AreaSeriesOptions> = {
+  lineColor: 'red',
+  topColor: 'rgba(202, 46, 189, 0.2)',
+  bottomColor: 'rgba(202, 46, 189, 0)',
+  priceLineVisible: false,
+  priceScaleId: 'right',
+  crosshairMarkerBorderWidth: 0,
+  crosshairMarkerRadius: 8,
+};
+
 class LinearChartController extends ChartController {
   lineSeries: ISeriesApi<
     'Area',
@@ -38,15 +48,18 @@ class LinearChartController extends ChartController {
     AreaData<Time> | WhitespaceData<Time>,
     AreaSeriesOptions,
     DeepPartial<AreaStyleOptions & SeriesOptionsCommon>
-  >;
+  >[] = [];
 
   constructor(params: ChartControllerParams<TimeChartOptions, Time>) {
     super(params);
 
-    this.lineSeries = this.api.addAreaSeries(seriesOpt);
-
     if (params.series && params.series.length > 0) {
-      this.lineSeries.setData(params.series[0].data);
+      for (const s of params.series) {
+        const lineSeries = this.api.addAreaSeries(s.options);
+        lineSeries.setData(s.data);
+
+        this.lineSeries.push(lineSeries);
+      }
     }
   }
 
@@ -56,7 +69,9 @@ class LinearChartController extends ChartController {
     super.applyOptions(params);
 
     if (params.series && params.series.length > 0) {
-      this.lineSeries.setData(params.series[0].data);
+      for (const [key, s] of params.series.entries()) {
+        this.lineSeries[key].setData(s.data);
+      }
     }
 
     /* this.lineSeries.setData(params?.series?.[0].data ?? []); */
@@ -176,37 +191,75 @@ export function App() {
             options: seriesOpt,
             data: toggle
               ? [
-                  { time: '2019-04-11', value: 80.01 },
-                  { time: '2019-04-12', value: 96.63 },
-                  { time: '2019-04-13', value: 76.64 },
-                  { time: '2019-04-14', value: 81.89 },
-                  { time: '2019-04-15', value: 74.43 },
-                  { time: '2019-04-16', value: 80.01 },
-                  { time: '2019-04-17', value: 96.63 },
-                  { time: '2019-04-18', value: 76.64 },
-                  { time: '2019-04-19', value: 81.89 },
-                  { time: '2019-04-20', value: 74.43 },
-                  { time: '2019-04-21', value: 80.01 },
-                  { time: '2019-04-22', value: 96.63 },
-                  { time: '2019-04-23', value: 76.64 },
-                  { time: '2019-04-24', value: 81.89 },
-                  { time: '2019-04-25', value: 74.43 },
-                  { time: '2019-04-26', value: 80.01 },
-                  { time: '2019-04-27', value: 96.63 },
-                  { time: '2019-04-28', value: 76.64 },
-                  { time: '2019-04-29', value: 81.89 },
-                  { time: '2019-04-30', value: 74.43 },
+                  { time: '2019-04-11', value: Math.random() },
+                  { time: '2019-04-12', value: Math.random() },
+                  { time: '2019-04-13', value: Math.random() },
+                  { time: '2019-04-14', value: Math.random() },
+                  { time: '2019-04-15', value: Math.random() },
+                  { time: '2019-04-16', value: Math.random() },
+                  { time: '2019-04-17', value: Math.random() },
+                  { time: '2019-04-18', value: Math.random() },
+                  { time: '2019-04-19', value: Math.random() },
+                  { time: '2019-04-20', value: Math.random() },
+                  { time: '2019-04-21', value: Math.random() },
+                  { time: '2019-04-22', value: Math.random() },
+                  { time: '2019-04-23', value: Math.random() },
+                  { time: '2019-04-24', value: Math.random() },
+                  { time: '2019-04-25', value: Math.random() },
+                  { time: '2019-04-26', value: Math.random() },
+                  { time: '2019-04-27', value: Math.random() },
+                  { time: '2019-04-28', value: Math.random() },
+                  { time: '2019-04-29', value: Math.random() },
+                  { time: '2019-04-30', value: Math.random() },
                 ]
               : [
-                  { time: '2019-04-11', value: 80.01 },
-                  { time: '2019-04-12', value: 96.63 },
-                  { time: '2019-04-13', value: 76.64 },
-                  { time: '2019-04-14', value: 81.89 },
-                  { time: '2019-04-15', value: 74.43 },
-                  { time: '2019-04-16', value: 80.01 },
-                  { time: '2019-04-17', value: 96.63 },
-                  { time: '2019-04-18', value: 76.64 },
-                  { time: '2019-04-19', value: 81.89 },
+                  { time: '2019-04-11', value: Math.random() },
+                  { time: '2019-04-12', value: Math.random() },
+                  { time: '2019-04-13', value: Math.random() },
+                  { time: '2019-04-14', value: Math.random() },
+                  { time: '2019-04-15', value: Math.random() },
+                  { time: '2019-04-16', value: Math.random() },
+                  { time: '2019-04-17', value: Math.random() },
+                  { time: '2019-04-18', value: Math.random() },
+                  { time: '2019-04-19', value: Math.random() },
+                ],
+          },
+          {
+            type: 'Area',
+            options: seriesOpt2,
+            data: toggle
+              ? [
+                  { time: '2019-04-11', value: Math.random() },
+                  { time: '2019-04-12', value: Math.random() },
+                  { time: '2019-04-13', value: Math.random() },
+                  { time: '2019-04-14', value: Math.random() },
+                  { time: '2019-04-15', value: Math.random() },
+                  { time: '2019-04-16', value: Math.random() },
+                  { time: '2019-04-17', value: Math.random() },
+                  { time: '2019-04-18', value: Math.random() },
+                  { time: '2019-04-19', value: Math.random() },
+                  { time: '2019-04-20', value: Math.random() },
+                  { time: '2019-04-21', value: Math.random() },
+                  { time: '2019-04-22', value: Math.random() },
+                  { time: '2019-04-23', value: Math.random() },
+                  { time: '2019-04-24', value: Math.random() },
+                  { time: '2019-04-25', value: Math.random() },
+                  { time: '2019-04-26', value: Math.random() },
+                  { time: '2019-04-27', value: Math.random() },
+                  { time: '2019-04-28', value: Math.random() },
+                  { time: '2019-04-29', value: Math.random() },
+                  { time: '2019-04-30', value: Math.random() },
+                ]
+              : [
+                  { time: '2019-04-11', value: Math.random() },
+                  { time: '2019-04-12', value: Math.random() },
+                  { time: '2019-04-13', value: Math.random() },
+                  { time: '2019-04-14', value: Math.random() },
+                  { time: '2019-04-15', value: Math.random() },
+                  { time: '2019-04-16', value: Math.random() },
+                  { time: '2019-04-17', value: Math.random() },
+                  { time: '2019-04-18', value: Math.random() },
+                  { time: '2019-04-19', value: Math.random() },
                 ],
           },
         ]}
