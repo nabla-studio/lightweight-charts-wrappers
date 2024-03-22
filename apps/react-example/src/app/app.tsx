@@ -5,10 +5,12 @@ import {
 } from '@nabla-studio/lightweight-charts-react';
 import {
   ColorType,
+  DeepPartial,
   LineStyle,
-  MouseEventParams,
+  TickMarkType,
   Time,
   TimeChartOptions,
+  isBusinessDay,
 } from 'lightweight-charts';
 import { Route, Routes, Link } from 'react-router-dom';
 
@@ -16,7 +18,15 @@ class LinearChartController extends ChartController {
   constructor(params: ChartControllerParams<TimeChartOptions, Time>) {
     super(params);
 
-    const lineSeries = this.api.addLineSeries();
+    const lineSeries = this.api.addAreaSeries({
+      lineColor: "#8C8AF9",
+      topColor: "rgba(60, 53, 109, 1)",
+      bottomColor: "rgba(32, 27, 67, 1)",
+      priceLineVisible: false,
+      priceScaleId: "left",
+      crosshairMarkerBorderWidth: 0,
+      crosshairMarkerRadius: 8,
+    });
 
     lineSeries.setData([
       { time: '2019-04-11', value: 80.01 },
@@ -29,12 +39,17 @@ class LinearChartController extends ChartController {
       { time: '2019-04-18', value: 76.64 },
       { time: '2019-04-19', value: 81.89 },
       { time: '2019-04-20', value: 74.43 },
+      { time: '2019-04-21', value: 80.01 },
+      { time: '2019-04-22', value: 96.63 },
+      { time: '2019-04-23', value: 76.64 },
+      { time: '2019-04-24', value: 81.89 },
+      { time: '2019-04-25', value: 74.43 },
+      { time: '2019-04-26', value: 80.01 },
+      { time: '2019-04-27', value: 96.63 },
+      { time: '2019-04-28', value: 76.64 },
+      { time: '2019-04-29', value: 81.89 },
+      { time: '2019-04-30', value: 74.43 },
     ]);
-  }
-
-  onCrosshairMove(param: MouseEventParams<Time>): void {
-    console.log('MOVE');
-    console.log(param);
   }
 
   onInit(): void {
@@ -46,30 +61,106 @@ class LinearChartController extends ChartController {
   }
 }
 
+const options: DeepPartial<TimeChartOptions> = {
+  layout: {
+    background: {
+      type: ColorType.Solid,
+      color: '#201B43',
+    },
+    textColor: '#B3B1FD',
+    fontSize: 14,
+  },
+  grid: { horzLines: { visible: false }, vertLines: { visible: false } },
+  rightPriceScale: { visible: false },
+  leftPriceScale: { visible: false },
+  crosshair: {
+    horzLine: { visible: false },
+    vertLine: {
+      labelBackgroundColor: '#201B43',
+      style: LineStyle.LargeDashed,
+      width: 2,
+      color: `#B0AADC33`,
+    },
+  },
+  handleScroll: false,
+  handleScale: false,
+  timeScale: {
+    timeVisible: true,
+    secondsVisible: false,
+    lockVisibleTimeRangeOnResize: true,
+    allowBoldLabels: false,
+    borderVisible: false,
+    tickMarkFormatter: (
+      timePoint: Time,
+      tickMarkType: TickMarkType,
+      locale: string
+    ) => {
+      const formatOptions: Intl.DateTimeFormatOptions = {};
+
+      switch (tickMarkType) {
+        case TickMarkType.Year:
+          formatOptions.year = "numeric";
+          break;
+
+        case TickMarkType.Month:
+          formatOptions.month = "short";
+          break;
+
+        case TickMarkType.DayOfMonth:
+          formatOptions.day = "numeric";
+          formatOptions.month = "short";
+          break;
+
+        case TickMarkType.Time:
+          formatOptions.hour12 = false;
+          formatOptions.hour = "2-digit";
+          formatOptions.minute = "2-digit";
+          break;
+
+        case TickMarkType.TimeWithSeconds:
+          formatOptions.hour12 = false;
+          formatOptions.hour = "2-digit";
+          formatOptions.minute = "2-digit";
+          formatOptions.second = "2-digit";
+          break;
+      }
+
+      let date = new Date();
+
+      if (typeof timePoint === 'string') {
+        date = new Date(timePoint)
+      } else if (!isBusinessDay(timePoint)) {
+        date = new Date((timePoint as number) * 1000)
+      } else {
+        date = new Date(
+          Date.UTC(timePoint.year, timePoint.month - 1, timePoint.day)
+        );
+      }
+
+      // from given date we should use only as UTC date or timestamp
+      // but to format as locale date we can convert UTC date to local date
+      const localDateFromUtc = new Date(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate(),
+        date.getUTCHours(),
+        date.getUTCMinutes(),
+        date.getUTCSeconds(),
+        date.getUTCMilliseconds()
+      );
+
+      return localDateFromUtc.toLocaleString(locale, formatOptions);
+    },
+  },
+  height: 336,
+}
+
 export function App() {
   return (
     <div>
       <Chart
         Controller={LinearChartController}
-        options={{
-          layout: {
-            background: {
-              type: ColorType.Solid,
-              color: 'red',
-            },
-            textColor: 'white',
-            fontSize: 14,
-          },
-          crosshair: {
-            vertLine: {
-              labelBackgroundColor: 'white',
-              style: LineStyle.LargeDashed,
-              width: 2,
-              color: 'white',
-            },
-          },
-          height: 336,
-        }}
+        options={options}
       >
         {(param) => {
           const dataSeries = Array.from(
