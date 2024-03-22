@@ -25,19 +25,17 @@ export interface ChartControllerParams<T = TimeChartOptions, K = Time> {
 
 export type ChartControllerEvents<T = TimeChartOptions, K = Time> = {
   crosshairMove: (param: MouseEventParams<K>) => void;
-  init: (params: ChartControllerParams<T>) => void;
-  remove: (params: ChartControllerParams<T>) => void;
+  init: (params: ChartControllerParams<T, K>) => void;
+  remove: (params: ChartControllerParams<T, K>) => void;
 };
 
 export abstract class ChartController<T = TimeChartOptions, K = Time> {
   protected api: IChartApi;
-  protected onCrosshairMove:
-    | ((param: MouseEventParams<Time>) => void)
-    | undefined;
+  protected onCrosshairMove: ((param: MouseEventParams<K>) => void) | undefined;
 
   events = new EventEmitter<ChartControllerEvents<T, K>>();
 
-  constructor(private params: ChartControllerParams<T>) {
+  constructor(protected params: ChartControllerParams<T, K>) {
     const { options, container, onCrosshairMove } = params;
 
     this.onCrosshairMove = onCrosshairMove;
@@ -57,7 +55,7 @@ export abstract class ChartController<T = TimeChartOptions, K = Time> {
     this.events.emit('init', this.params);
   }
 
-  applyOptions(params: Partial<ChartControllerParams<T>>) {
+  applyOptions(params: Partial<ChartControllerParams<T, K>>) {
     if (params.options) {
       this.api.applyOptions(params.options);
     }
