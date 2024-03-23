@@ -1,22 +1,18 @@
 import { Chart } from '@nabla-studio/lightweight-charts-react';
 import {
-  ChartController,
+  AreaChartController,
   ChartControllerParams,
 } from '@nabla-studio/lightweight-charts-core';
 import {
   AreaData,
   AreaSeriesOptions,
-  AreaStyleOptions,
   ColorType,
   DeepPartial,
-  ISeriesApi,
   LineStyle,
   MouseEventParams,
-  SeriesOptionsCommon,
   TickMarkType,
   Time,
   TimeChartOptions,
-  WhitespaceData,
   isBusinessDay,
 } from 'lightweight-charts';
 import { useState } from 'react';
@@ -42,27 +38,11 @@ const seriesOpt2: DeepPartial<AreaSeriesOptions> = {
   crosshairMarkerRadius: 8,
 };
 
-class LinearChartController extends ChartController {
-  lineSeries: ISeriesApi<
-    'Area',
-    Time,
-    AreaData<Time> | WhitespaceData<Time>,
-    AreaSeriesOptions,
-    DeepPartial<AreaStyleOptions & SeriesOptionsCommon>
-  >[] = [];
+class LinearChartController extends AreaChartController {
   tooltip: HTMLDivElement;
 
   constructor(params: ChartControllerParams<TimeChartOptions, Time>) {
     super(params);
-
-    if (params.series && params.series.length > 0) {
-      for (const s of params.series) {
-        const lineSeries = this.api.addAreaSeries(s.options);
-        lineSeries.setData(s.data);
-
-        this.lineSeries.push(lineSeries);
-      }
-    }
 
     this.tooltip = document.createElement('div');
     this.tooltip.style.borderRadius = '20px';
@@ -142,24 +122,6 @@ class LinearChartController extends ChartController {
       this.tooltip.style.left = left + 'px';
       this.tooltip.style.top = top + 'px';
     }
-  }
-
-  applyOptions(
-    params: Partial<ChartControllerParams<TimeChartOptions, Time>>
-  ): void {
-    super.applyOptions(params);
-
-    if (params.series && params.series.length > 0) {
-      for (const [key, s] of params.series.entries()) {
-        this.lineSeries[key].setData(s.data);
-      }
-    }
-
-    /* this.lineSeries.setData(params?.series?.[0].data ?? []); */
-
-    /*  console.log("APPLY: ", params?.series?.[0].data ?? [])
-
-    this.lineSeries.setData(params?.series?.[0].data ?? []) */
   }
 }
 
