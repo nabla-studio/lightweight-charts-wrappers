@@ -5,8 +5,7 @@
   "scripts": {
     "build": "nx run-many --target=build --exclude react-example --parallel=6",
     "test": "nx run-many --target=test --exclude react-example --parallel=6",
-    "lint": "nx run-many --target=lint --exclude react-example --parallel=6",
-    "prepare": "husky install"
+    "lint": "nx run-many --target=lint --exclude react-example --parallel=6"
   },
   "private": true,
   "devDependencies": {
@@ -52,6 +51,9 @@
     "react-dom": "18.2.0",
     "react-router-dom": "6.11.2"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "nx": {
     "includedScripts": []
   }
