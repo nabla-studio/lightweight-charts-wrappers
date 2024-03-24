@@ -14,6 +14,7 @@
     "react": "18.2.0"
   },
   "dependencies": {
+    "@nabla-studio/lightweight-charts-core": "workspace:*",
     "lightweight-charts": "^4.1.3"
   }
 }
