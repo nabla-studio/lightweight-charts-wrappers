@@ -2,6 +2,13 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.1.1](https://github.com/nabla-studio/lightweight-charts-wrappers/compare/core@0.1.0...core@0.1.1) (2024-03-24)
+
+
+### Bug Fixes
+
+* **core:** :wrench: fix npm build path ([ac20d02](https://github.com/nabla-studio/lightweight-charts-wrappers/commit/ac20d027e47ef6690a759fd22da1e8168d243a49))
+
 ## 0.1.0 (2024-03-24)
 
 
