@@ -153,6 +153,9 @@ importers:
 
   packages/react:
     dependencies:
+      '@nabla-studio/lightweight-charts-core':
+        specifier: workspace:*
+        version: link:../core
       lightweight-charts:
         specifier: ^4.1.3
         version: 4.1.3
