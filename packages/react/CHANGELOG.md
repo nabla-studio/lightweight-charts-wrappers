@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.1.1](https://github.com/nabla-studio/lightweight-charts-wrappers/compare/react@0.1.0...react@0.1.1) (2024-03-24)
+
+### Dependency Updates
+
+* `core` updated to version `0.1.0`
+
+### Bug Fixes
+
+* **react:** :wrench: fix npm build path ([ecfb00f](https://github.com/nabla-studio/lightweight-charts-wrappers/commit/ecfb00fc4a6cdd1b3ad3b31c622ba32faea274db))
+
 ## 0.1.0 (2024-03-24)
 
 ### Dependency Updates
