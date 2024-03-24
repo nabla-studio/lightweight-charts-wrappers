@@ -5,6 +5,14 @@
   "projectType": "library",
   "tags": [],
   "targets": {
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "../../coverage/packages/core"
+      }
+    },
     "build": {
       "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
@@ -13,11 +21,6 @@
         "main": "packages/react/src/index.ts",
         "tsConfig": "packages/react/tsconfig.lib.json",
         "assets": ["packages/react/*.md"]
-      }
-    },
-    "nx-release-publish": {
-      "options": {
-        "packageRoot": "dist/{projectRoot}"
       }
     },
     "version": {
