@@ -1,20 +1,16 @@
 {
   "name": "@nabla-studio/lightweight-charts-react",
   "version": "0.0.1",
-  "main": "./index.js",
-  "types": "./index.d.ts",
   "sideEffects": false,
-  "exports": {
-    ".": {
-      "import": "./index.mjs",
-      "require": "./index.js"
-    }
-  },
+  "type": "module",
   "peerDependencies": {
     "react": "18.2.0"
   },
   "dependencies": {
-    "@nabla-studio/lightweight-charts-core": "workspace:*",
+    "@nabla-studio/lightweight-charts-core": "*",
     "lightweight-charts": "^4.1.3"
-  }
+  },
+  "main": "./index.js",
+  "module": "./index.js",
+  "typings": "./index.d.ts"
 }

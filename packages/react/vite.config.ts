@@ -27,11 +27,6 @@ export default defineConfig({
   // Configuration for building your library.
   // See: https://vitejs.dev/guide/build.html#library-mode
   build: {
-    outDir: '../../dist/packages/react',
-    reportCompressedSize: true,
-    commonjsOptions: {
-      transformMixedEsModules: true,
-    },
     lib: {
       // Could also be a dictionary or array of multiple entry points.
       entry: 'src/index.ts',
@@ -42,6 +37,9 @@ export default defineConfig({
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
+      output: {
+        preserveModules: true,
+      },
       // External packages that should not be bundled into your library.
       external: [
         'react',
