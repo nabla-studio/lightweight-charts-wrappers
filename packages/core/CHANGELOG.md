@@ -2,6 +2,14 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.2.0](https://github.com/nabla-studio/lightweight-charts-wrappers/compare/core@0.1.1...core@0.2.0) (2024-03-25)
+
+
+### Features
+
+* **core:** :sparkles: improve type imports ([c9ad402](https://github.com/nabla-studio/lightweight-charts-wrappers/commit/c9ad402038bd3af49c3e4f54a54338a2ca2a4308))
+* **core:** :wrench: improve esm build ([2d3e3ff](https://github.com/nabla-studio/lightweight-charts-wrappers/commit/2d3e3ff16fac8175b3960c842e6f08b15d26d9e6))
+
 ## [0.1.1](https://github.com/nabla-studio/lightweight-charts-wrappers/compare/core@0.1.0...core@0.1.1) (2024-03-24)
 
 
