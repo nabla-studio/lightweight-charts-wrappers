@@ -1,4 +1,4 @@
-import {
+import type {
   DeepPartial,
   ISeriesApi,
   LineData,
@@ -9,7 +9,7 @@ import {
   TimeChartOptions,
   WhitespaceData,
 } from 'lightweight-charts';
-import { ChartController, ChartControllerParams } from './chart';
+import { ChartController, type ChartControllerParams } from './chart';
 
 export class LineChartController<
   T = TimeChartOptions,
