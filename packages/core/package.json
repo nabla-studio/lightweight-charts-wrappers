@@ -2,8 +2,9 @@
   "name": "@nabla-studio/lightweight-charts-core",
   "version": "0.1.1",
   "main": "./index.js",
-  "module": "./index.mjs",
+  "module": "./index.js",
   "typings": "./index.d.ts",
+  "type": "module",
   "sideEffects": false,
   "dependencies": {
     "eventemitter3": "^5.0.1",
